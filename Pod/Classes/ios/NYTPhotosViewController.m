@@ -314,7 +314,15 @@ static const UIEdgeInsets NYTPhotosViewControllerCloseButtinImageInsets = {3, 0,
 }
 
 - (void)updateImageForPhoto:(id <NYTPhoto>)photo {
-    [self.notificationCenter postNotificationName:NYTPhotoViewControllerPhotoImageUpdatedNotification object:photo];
+    [self updateImageForPhoto:photo preserveFrame:NO];
+}
+
+- (void)updateImageForPhoto:(id <NYTPhoto>)photo preserveFrame:(BOOL)preserveFrame {
+    [self.notificationCenter postNotificationName:[self updateImageNotificationNameWhenPreservingFrame:preserveFrame] object:photo];
+}
+
+- (NSString *)updateImageNotificationNameWhenPreservingFrame:(BOOL)preserveFrame {
+    return preserveFrame ? NYTPhotoViewControllerPhotoImageUpdatedPreserveFrameNotification : NYTPhotoViewControllerPhotoImageUpdatedNotification;
 }
 
 #pragma mark - Gesture Recognizers

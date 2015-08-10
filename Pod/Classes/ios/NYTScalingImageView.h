@@ -33,6 +33,14 @@
 - (void)updateImage:(UIImage *)image;
 
 /**
+ *  Updates the image in the image view and centers and zooms the new image.
+ *
+ *  @param image The new image to display in the image view.
+ *  @param preserveFrame Whether the update should not resize the image's 100% size frame
+ */
+- (void)updateImage:(UIImage *)image preserveFrame:(BOOL)preserveFrame;
+
+/**
  *  Centers the image inside of the scroll view. Typically used after rotation, or when zooming has finished.
  */
 - (void)centerScrollViewContents;

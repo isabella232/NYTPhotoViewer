@@ -108,6 +108,14 @@ extern NSString * const NYTPhotosViewControllerDidShowOverlayViewNotification;
  */
 - (void)updateImageForPhoto:(id <NYTPhoto>)photo;
 
+/**
+ *  Update the image displayed for the given photo object.
+ *
+ *  @param photo The photo for which to display the new image.
+ *  @param preserveFrame Whether the update should not resize the image's 100% size frame
+ */
+- (void)updateImageForPhoto:(id <NYTPhoto>)photo preserveFrame:(BOOL)preserveFrame;
+
 @end
 
 /**

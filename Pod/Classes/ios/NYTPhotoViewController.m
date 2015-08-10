@@ -11,6 +11,7 @@
 #import "NYTScalingImageView.h"
 
 NSString * const NYTPhotoViewControllerPhotoImageUpdatedNotification = @"NYTPhotoViewControllerPhotoImageUpdatedNotification";
+NSString * const NYTPhotoViewControllerPhotoImageUpdatedPreserveFrameNotification = @"NYTPhotoViewControllerPhotoImageUpdatedPreserveFrameNotification";
 
 @interface NYTPhotoViewController () <UIScrollViewDelegate>
 
@@ -44,7 +45,8 @@ NSString * const NYTPhotoViewControllerPhotoImageUpdatedNotification = @"NYTPhot
     [super viewDidLoad];
     
     [self.notificationCenter addObserver:self selector:@selector(photoImageUpdatedWithNotification:) name:NYTPhotoViewControllerPhotoImageUpdatedNotification object:nil];
-    
+    [self.notificationCenter addObserver:self selector:@selector(photoImageUpdatedPreserveFrameWithNotification:) name:NYTPhotoViewControllerPhotoImageUpdatedPreserveFrameNotification object:nil];
+
     self.scalingImageView.frame = self.view.bounds;
     [self.view addSubview:self.scalingImageView];
     
@@ -99,14 +101,21 @@ NSString * const NYTPhotoViewControllerPhotoImageUpdatedNotification = @"NYTPhot
 }
 
 - (void)photoImageUpdatedWithNotification:(NSNotification *)notification {
-    id <NYTPhoto> photo = notification.object;
+    [self photoImageUpdated:(id<NYTPhoto>)notification.object preserveFrame:NO];
+}
+
+- (void)photoImageUpdatedPreserveFrameWithNotification:(NSNotification *)notification {
+    [self photoImageUpdated:(id<NYTPhoto>)notification.object preserveFrame:YES];
+}
+
+- (void)photoImageUpdated:(id<NYTPhoto>)photo preserveFrame:(BOOL)preserveFrame {
     if ([photo conformsToProtocol:@protocol(NYTPhoto)] && [photo isEqual:self.photo]) {
-        [self updateImage:photo.image];
+        [self updateImage:photo.image preserveFrame:preserveFrame];
     }
 }
 
-- (void)updateImage:(UIImage *)image {
-    [self.scalingImageView updateImage:image];
+- (void)updateImage:(UIImage *)image preserveFrame:(BOOL)preserveFrame {
+    [self.scalingImageView updateImage:image preserveFrame:preserveFrame];
     
     if (image) {
         [self.loadingView removeFromSuperview];

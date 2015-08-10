@@ -18,6 +18,7 @@
  *  `NYTPhotoViewController` observes this notification. It expects an `id <NYTPhoto>` object as the object of the notification.
  */
 extern NSString * const NYTPhotoViewControllerPhotoImageUpdatedNotification;
+extern NSString * const NYTPhotoViewControllerPhotoImageUpdatedPreserveFrameNotification;
 
 /**
  *  The view controller controlling the display of a single photo object.

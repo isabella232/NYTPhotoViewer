@@ -59,16 +59,30 @@
 }
 
 - (void)updateImage:(UIImage *)image {
+    [self updateImage:image preserveFrame:NO];
+}
+
+- (void)updateImage:(UIImage *)image preserveFrame:(BOOL)preserveFrame {
     // Remove any transform currently applied by the scroll view zooming.
     self.imageView.transform = CGAffineTransformIdentity;
-    
+    CGRect previousImageViewFrame = self.imageView.frame;
+
     self.imageView.image = image;
     self.imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
     
     self.contentSize = image.size;
     
     [self updateZoomScale];
-    [self centerScrollViewContents];
+    
+    if (!preserveFrame) {
+        [self centerScrollViewContents];
+    }
+    
+    if (preserveFrame) {
+        self.imageView.frame = previousImageViewFrame;
+    }
+    [self centerScrollViewContentsForContentSize:preserveFrame ? previousImageViewFrame.size : self.contentSize];
+
 }
 
 - (void)setupImageScrollView {
@@ -105,15 +119,19 @@
 #pragma mark - Centering
 
 - (void)centerScrollViewContents {
+    [self centerScrollViewContentsForContentSize:self.contentSize];
+}
+
+- (void)centerScrollViewContentsForContentSize:(CGSize)contentSize {
     CGFloat horizontalInset = 0;
     CGFloat verticalInset = 0;
     
-    if (self.contentSize.width < CGRectGetWidth(self.bounds)) {
-        horizontalInset = (CGRectGetWidth(self.bounds) - self.contentSize.width) * 0.5;
+    if (contentSize.width < CGRectGetWidth(self.bounds)) {
+        horizontalInset = (CGRectGetWidth(self.bounds) - contentSize.width) * 0.5;
     }
     
     if (self.contentSize.height < CGRectGetHeight(self.bounds)) {
-        verticalInset = (CGRectGetHeight(self.bounds) - self.contentSize.height) * 0.5;
+        verticalInset = (CGRectGetHeight(self.bounds) - contentSize.height) * 0.5;
     }
     
     if (self.window.screen.scale < 2.0) {
