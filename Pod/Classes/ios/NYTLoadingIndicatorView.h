@@ -14,5 +14,6 @@
  *  The progress to be shown, ranging 0.0 to 1.0
  */
 @property (nonatomic, assign) CGFloat progress;
+@property (nonatomic, assign, getter=isIndefinite) BOOL indefinite;
 
 @end
