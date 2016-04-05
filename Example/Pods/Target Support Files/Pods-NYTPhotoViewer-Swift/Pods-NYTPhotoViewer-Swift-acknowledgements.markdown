@@ -5,7 +5,7 @@ This application makes use of the following third party libraries:
 
 The MIT License (MIT)
 
-Copyright (c) 2014-2015 Flipboard
+Copyright (c) 2014-2016 Flipboard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ SOFTWARE.
 
 ## NYTPhotoViewer
 
-Copyright (c) 2015 The New York Times Company
+Copyright (c) 2015-2016 The New York Times Company
  
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this library except in compliance with the License.
