@@ -115,6 +115,9 @@ typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
     _progress = progress;
     [self setIndefinite:NO];
     [self updateIndicatorView];
+    if (progress >= 0.0f && progress < 1.0f) {
+        self.indicatorView.hidden = NO;
+    }
 }
 
 - (void)setIndefinite:(BOOL)indefinite {
