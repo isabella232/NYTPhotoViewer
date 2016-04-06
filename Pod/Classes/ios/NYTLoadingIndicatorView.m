@@ -7,7 +7,7 @@
 //
 
 #import "NYTLoadingIndicatorView.h"
-#define kIndefiniteLoaderWidth 10
+#define kIndefiniteLoaderWidth 40
 
 typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
     NYTLoadingAnimationDirectionRight,
@@ -103,9 +103,9 @@ typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
     }
     
     if (self.animationDirection == NYTLoadingAnimationDirectionRight) {
-        self.animationPosition += self.bounds.size.width / (kIndefiniteLoaderWidth * 10);
+        self.animationPosition += self.bounds.size.width / kIndefiniteLoaderWidth;
     } else {
-        self.animationPosition -= self.bounds.size.width/ (kIndefiniteLoaderWidth * 10);
+        self.animationPosition -= self.bounds.size.width / kIndefiniteLoaderWidth;
     }
     self.indicatorView.frame = (CGRect){self.animationPosition, 0, kIndefiniteLoaderWidth, self.bounds.size.height};
 }
