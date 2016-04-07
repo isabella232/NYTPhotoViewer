@@ -7,19 +7,13 @@
 //
 
 #import "NYTLoadingIndicatorView.h"
-#define kIndefiniteLoaderWidth 40
-
-typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
-    NYTLoadingAnimationDirectionRight,
-    NYTLoadingAnimationDirectionLeft
-};
 
 @interface NYTLoadingIndicatorView ()
 
 @property (nonatomic) UIView *indicatorView;
 @property (nonatomic) NSTimer *animationTimer;
 
-@property (nonatomic) NYTLoadingAnimationDirection animationDirection;
+@property (nonatomic) CGFloat animationStep;
 @property (nonatomic) CGFloat animationPosition;
 
 @end
@@ -55,7 +49,7 @@ typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
 }
 
 - (void)resetIndicatorHidden:(BOOL)hidden {
-    self.indicatorView.frame = (CGRect){0, 0, 0, self.bounds.size.height};
+    self.indicatorView.frame = (CGRect){0, 0, self.animationPosition, self.bounds.size.height};
     self.indicatorView.hidden = hidden;
 }
 
@@ -72,18 +66,19 @@ typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
     if (self.progress >= 1.0f) {
         return [self resetIndicatorHidden:YES];
     }
-    self.indicatorView.frame = (CGRect){0, 0, [self progressWidth:self.progress], self.bounds.size.height};
+    self.indicatorView.frame = (CGRect){0, 0, [self progressWidth:self.progress] + self.animationPosition, self.bounds.size.height};
 }
 
 - (CGFloat)progressWidth:(CGFloat)progress {
-    return (self.bounds.size.width / 100) * (progress * 100);
+    return ((self.bounds.size.width - self.animationPosition) / 100) * (progress * 100);
 }
 
 - (void)indefiniteAnimation:(BOOL)start {
     self.indicatorView.hidden = !start;
     if (start) {
-        self.indicatorView.frame = (CGRect){0, 0, kIndefiniteLoaderWidth, self.bounds.size.height};
-        self.animationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60
+        self.animationStep = 1;
+        self.indicatorView.frame = (CGRect){0, 0, 0, self.bounds.size.height};
+        self.animationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60 //60fps animation
                                                                target:self
                                                              selector:@selector(indefiniteAnimation)
                                                              userInfo:nil
@@ -93,27 +88,20 @@ typedef NS_ENUM(NSInteger, NYTLoadingAnimationDirection) {
     if (self.animationTimer.isValid) {
         [self.animationTimer invalidate];
     }
+    self.animationPosition = 0;
 }
 
 - (void)indefiniteAnimation {
-    if (self.indicatorView.frame.origin.x >= self.bounds.size.width + kIndefiniteLoaderWidth) {
-        self.animationDirection = NYTLoadingAnimationDirectionLeft;
-    } else if (self.indicatorView.frame.origin.x <= 0 - kIndefiniteLoaderWidth) {
-        self.animationDirection = NYTLoadingAnimationDirectionRight;
-    }
-    
-    if (self.animationDirection == NYTLoadingAnimationDirectionRight) {
-        self.animationPosition += self.bounds.size.width / kIndefiniteLoaderWidth;
-    } else {
-        self.animationPosition -= self.bounds.size.width / kIndefiniteLoaderWidth;
-    }
-    self.indicatorView.frame = (CGRect){self.animationPosition, 0, kIndefiniteLoaderWidth, self.bounds.size.height};
+    self.animationPosition += pow(0.8, (self.animationStep / 60));
+    self.indicatorView.frame = (CGRect){0, 0, self.animationPosition, self.bounds.size.height};
+    self.animationStep++;
 }
 
 #pragma mark - Accessors
 - (void)setProgress:(CGFloat)progress {
     _progress = progress;
-    [self setIndefinite:NO];
+    _indefinite = NO; // don't go through setter because we don't wanna force-hide the indicator
+    [self.animationTimer invalidate];
     [self updateIndicatorView];
     if (progress >= 0.0f && progress < 1.0f) {
         self.indicatorView.hidden = NO;
