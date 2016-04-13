@@ -11,6 +11,11 @@
 #import "tgmath.h"
 
 #ifdef ANIMATED_GIF_SUPPORT
+#import <ImageIO/ImageIO.h>
+/**
+ * ATLASSIAN MODIFIED
+ */
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
 #endif
 
@@ -134,7 +139,16 @@
     
 #ifdef ANIMATED_GIF_SUPPORT
     // It's necessarry to first assign the UIImage so calulations for layout go right (see above)
-    self.imageView.animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:imageData];
+    /**
+     * ATLASSIAN MODIFIED
+     */
+    if (imageData) {
+        if ([self isAnimatedGifData:imageData]) {
+            self.imageView.animatedImage = [[FLAnimatedImage alloc] initWithAnimatedGIFData:imageData];
+        } else {
+            self.imageView.image = [UIImage imageWithData:imageData];
+        }
+    }
 #endif
     
 #ifndef INTERACTIVE_RELOAD
@@ -163,6 +177,22 @@
     self.bouncesZoom = YES;
     self.decelerationRate = UIScrollViewDecelerationRateFast;
 }
+
+/**
+ * ATLASSIAN MODIFIED
+ */
+#ifdef ANIMATED_GIF_SUPPORT
+- (BOOL)isAnimatedGifData:(NSData *)data {
+    CGImageSourceRef src = CGImageSourceCreateWithData((__bridge CFDataRef)data,
+                                                       (__bridge CFDictionaryRef)@{(NSString *)kCGImageSourceShouldCache: @NO});
+    if (!src) {
+        return NO;
+    }
+    
+    CFStringRef imageSourceContainerType = CGImageSourceGetType(src);
+    return UTTypeConformsTo(imageSourceContainerType, kUTTypeGIF);
+}
+#endif
 
 - (void)updateZoomScale {
 #ifdef ANIMATED_GIF_SUPPORT
