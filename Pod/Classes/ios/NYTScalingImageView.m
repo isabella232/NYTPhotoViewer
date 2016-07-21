@@ -153,9 +153,8 @@
     
 #ifndef INTERACTIVE_RELOAD
     self.imageView.frame = CGRectMake(0, 0, imageToUse.size.width, imageToUse.size.height);
-#endif
-    
     self.contentSize = imageToUse.size;
+#endif
     
 #ifdef INTERACTIVE_RELOAD
     self.baseZoomScale = self.zoomScale;
